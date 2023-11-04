@@ -1,0 +1,47 @@
+8、MySQL常用命令：
+
+    退出MySQL：exit
+
+    查看MySQL中有哪些数据库？
+        show databases;
+        注意：以分号结尾，分号是英文的分号。
+
+        mysql> show databases;
+        +--------------------+
+        | Database           |
+        +--------------------+
+        | information_schema |
+        | mysql              |
+        | performance_schema |
+        | sakila             |
+        | sys                |
+        | world              |
+        +--------------------+
+        mysql默认自带了6个数据库。
+
+    怎么选择使用某个数据库呢？
+        mysql> use world;
+        Database changed
+        表示正在使用一个名叫world的数据库。
+
+    怎么创建数据库呢？
+        mysql> create database bjpowernode;
+        Query OK, 1 row affected (0.36 sec)
+
+        mysql> show databases;
+        +--------------------+
+        | Database           |
+        +--------------------+
+        | bjpowernode        |
+        | information_schema |
+        | mysql              |
+        | performance_schema |
+        | sakila             |
+        | sys                |
+        | world              |
+        +--------------------+
+    
+    查看某个数据库下有哪些表？
+        mysql> show tables;
+
+    注意：以上的命令不区分大小写，都行。
