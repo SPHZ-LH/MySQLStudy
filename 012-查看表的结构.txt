@@ -1,0 +1,33 @@
+12、不看表中的数据，只看表的结构，有一个命令：
+   desc 表名；
+    mysql> desc dept;
+    +--------+-------------+------+-----+---------+-------+
+    | Field  | Type        | Null | Key | Default | Extra |
+    +--------+-------------+------+-----+---------+-------+
+    | deptno | int         | NO   | PRI | NULL    |       |部门编号
+    | dname  | varchar(14) | YES  |     | NULL    |       |部门名字
+    | loc    | varchar(13) | YES  |     | NULL    |       |地理位置
+    +--------+-------------+------+-----+---------+-------+
+
+    mysql> desc emp;
+    +----------+-------------+------+-----+---------+-------+
+    | Field    | Type        | Null | Key | Default | Extra |
+    +----------+-------------+------+-----+---------+-------+
+    | empno    | int         | NO   | PRI | NULL    |       |员工编号
+    | ename    | varchar(10) | YES  |     | NULL    |       |员工姓名
+    | job      | varchar(9)  | YES  |     | NULL    |       |工作岗位
+    | mgr      | int         | YES  |     | NULL    |       |上级编号
+    | hiredate | date        | YES  |     | NULL    |       |入职日期
+    | sal      | double(7,2) | YES  |     | NULL    |       |工资
+    | comm     | double(7,2) | YES  |     | NULL    |       |补助
+    | deptno   | int         | YES  |     | NULL    |       |部门编号
+    +----------+-------------+------+-----+---------+-------+
+
+    mysql> desc salgrade;
+    +-------+------+------+-----+---------+-------+
+    | Field | Type | Null | Key | Default | Extra |
+    +-------+------+------+-----+---------+-------+
+    | grade | int  | YES  |     | NULL    |       |工资等级
+    | losal | int  | YES  |     | NULL    |       |最低工资
+    | hisal | int  | YES  |     | NULL    |       |最高工资
+    +-------+------+------+-----+---------+-------+

@@ -1,0 +1,36 @@
+13、MySQL常用命令：
+    查看当前使用的是哪个数据库？
+        mysql> select database();
+        +-------------+
+        | database()  |
+        +-------------+
+        | bjpowernode |
+        +-------------+
+
+        mysql> show
+            -> databases
+            -> ;
+        +--------------------+
+        | Database           |
+        +--------------------+
+        | bjpowernode        |
+        | information_schema |
+        | mysql              |
+        | performance_schema |
+        | sakila             |
+        | sys                |
+        | world              |
+        +--------------------+
+
+        注意：mysql不见“;”不执行，“;”表示结束！
+
+        mysql> show
+            ->
+            ->
+            ->
+            ->
+            ->
+            ->
+            -> \c
+        mysql>
+        \c用来终止一条命令的输入。
