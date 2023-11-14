@@ -1,0 +1,78 @@
+25、limit（非常重要）
+
+    25.1、limit作用：将查询结果集的一部分取出来。通常使用在分页查询中。
+        百度默认：一页显示10条记录。
+        分页的作用时为了提高用户的体验，因为一次全部都查出来，用户体验差。
+        可以一页一页翻页看。
+
+    25.2、limit怎么用呢？
+
+        完整用法：limit startIndex, length
+            startIndex是起始下标，length是长度。
+            起始下标从0开始。
+
+        缺省用法：limit 5；这是取前5.
+
+        按照薪资降序，取出排名在前5名的员工？
+        select
+            ename,sal
+        from
+            emp
+        order by
+            sal desc
+        limit 5; // 取前5
+
+        select
+            ename,sal
+        from
+            emp
+        order by
+            sal desc
+        limit 0, 5;
+
+        +-------+---------+
+        | ename | sal     |
+        +-------+---------+
+        | KING  | 5000.00 |
+        | SCOTT | 3000.00 |
+        | FORD  | 3000.00 |
+        | JONES | 2975.00 |
+        | BLAKE | 2850.00 |
+        +-------+---------+
+
+    25.3、注意：mysql当中limit在order by之后执行！！！！！！
+
+    25.4、取出工资排名在[3-5]名的员工？
+        select
+            ename,sal
+        from
+            emp
+        order by
+            sal desc
+        limit
+            2, 3;
+        
+        2表示起始位置从下标2开始，就是第三条记录。
+        3表示长度。
+
+        +-------+---------+
+        | ename | sal     |
+        +-------+---------+
+        | FORD  | 3000.00 |
+        | JONES | 2975.00 |
+        | BLAKE | 2850.00 |
+        +-------+---------+
+
+    25.5、分页
+
+        每页显示3条记录
+            第1页：limit 0, 3       [0 1 2]
+            第2页：limit 3, 3       [3 4 5]
+            第3页：limit 6, 3       [6 7 8]
+            第4页：limit 9, 3       [9 10 11]
+
+        每页显示pageSize条记录
+            第pageNo页：limit (pageNo - 1) * pageSize, pageSize
+
+        记公式：
+            limit (pageNo - 1) * pageSize, pageSize
