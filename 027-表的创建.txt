@@ -1,0 +1,392 @@
+27、表的创建（建表）
+
+    27.1、建表的语法格式：（建表属于DDL语句，DDL包含：create drop alter）
+
+        create table 表名（字段名1 数据类型，字段名2 数据类型，字段名3 数据类型）；
+
+        create table 表名（
+        字段名1 数据类型，
+        字段名2 数据类型，
+        字段名3 数据类型
+        ）；
+
+        表名：建议t_或者tbl_开始，可读性强。见名知意。
+        字段名：见名知意。
+        表名和字段名都属于标识符。
+
+    27.2、关于mysql中的数据类型？
+
+        很多数据类型，我们只需要掌握一些常见的数据类型即可。
+
+            varchar（最长255）
+                可变长度的字符串
+                比较智能，节省空间。
+                会根据实际的数据长度动态分配空间。
+
+                优点：节省空间
+                缺点：需要动态分配空间，速度慢
+
+            char（最长255）
+                定长字符串
+                不管实际的数据长度是多少。
+                分配固定长度的空间取存储数据。
+                使用不恰当的时候，可能会导致空间的浪费。
+
+                优点：不需要动态分配空间，速度快。
+                缺点：使用不当可能会导致空间的浪费。
+
+                vachar和char我们应该怎么选择？
+                    性别字段你选什么？因为性别是固定长度的字符串，所以选择char。
+                    姓名字段你选什么？每一个人的名字长度不同，所以选择varchar。
+
+            int（最长11）
+                数字中的整数型。等同于java的int。
+
+            bigint
+                数字中的长整数。等同于java中的long。
+
+            float
+                单精度浮点类型数据
+
+            double
+                双精度浮点型数据
+
+            date
+                短日期类型
+
+            datetime
+                长日期类型
+
+            clob
+                字符串大对象
+                最多可以存储4G的字符串
+                比如：存储一篇文章，存储一个说明。
+                超过255个字符的都要采用CLOB字符大对象来存储。
+                Character Large OBject:CLOB
+            
+            blob
+                二进制大对象
+                Binary OBject
+                专门用来存储图片、声音、视频等流媒体数据。
+                往BLOB类型的字段上插入数据的时候，例如插入一个图片、视频等，
+                你需要使用IO流才行。
+
+    27.3、创建一个学生表？
+        学号、姓名、年龄、性别、邮箱地址
+        create table t_student(
+            no int,
+            name varchar(32),
+            sex char(1),
+            age int(3),
+            email varchar(255)
+        );
+
+        删除表：
+            drop table t_student; // 当这张表不存在的时候会报错！
+
+            // 如果这张表存在的话，删除
+            drop table if exists t_student;
+    
+    27.4、插入数据insert（DML）
+        
+        语法格式：
+            insert into 表名（字段名1，字段名2，字段名3。。。）values（值1，值2，值3）；
+
+            注意：字段名和值要一一对应。什么是一一对应？
+                数量要对应。数据类型要对应。
+
+            insert into t_student(no,name,sex,age,email) values(1,'zhangsan','m',20,'zhangsan@123.com');
+            insert into t_student(email,name,sex,age,no) values('lisi@123.com','lisi','f',20,2);
+
+            insert into t_student(no) values(3);
+            +------+----------+------+------+------------------+
+            | no   | name     | sex  | age  | email            |
+            +------+----------+------+------+------------------+
+            |    1 | zhangsan | m    |   20 | zhangsan@123.com |
+            |    2 | lisi     | f    |   20 | lisi@123.com     |
+            |    3 | NULL     | NULL | NULL | NULL             |
+            +------+----------+------+------+------------------+
+            insert into t_student(name) values('wangwu');
+            +------+----------+------+------+------------------+
+            | no   | name     | sex  | age  | email            |
+            +------+----------+------+------+------------------+
+            |    1 | zhangsan | m    |   20 | zhangsan@123.com |
+            |    2 | lisi     | f    |   20 | lisi@123.com     |
+            |    3 | NULL     | NULL | NULL | NULL             |
+            | NULL | wangwu   | NULL | NULL | NULL             |
+            +------+----------+------+------+------------------+
+            注意：insert语句但凡是执行成功了，那么必然会多一条记录。
+            没有给其他字段指定值的话，默认值是NULL。
+
+            drop table if exists t_student;
+            create table t_student(
+                no int,
+                name varchar(32),
+                sex char(1) default 'm',
+                age int(3),
+                email varchar(255)
+            );
+            +-------+--------------+------+-----+---------+-------+
+            | Field | Type         | Null | Key | Default | Extra |
+            +-------+--------------+------+-----+---------+-------+
+            | no    | int          | YES  |     | NULL    |       |
+            | name  | varchar(32)  | YES  |     | NULL    |       |
+            | sex   | char(1)      | YES  |     | m       |       |890hz cccd fffvv
+            | age   | int          | YES  |     | NULL    |       |
+            | email | varchar(255) | YES  |     | NULL    |       |
+            +-------+--------------+------+-----+---------+-------+
+
+            insert into t_student(no) values(1);
+            mysql> select * from t_student;
+            +------+------+------+------+-------+
+            | no   | name | sex  | age  | email |
+            +------+------+------+------+-------+
+            |    1 | NULL | m    | NULL | NULL  |
+            +------+------+------+------+-------+
+        
+        insert语句中的“字段名”可以省略吗？可以
+            insert into t_student values(2); // 错误的
+
+            // 注意：前面的字段名省略的话，等于都写上了！所以值也要都写上！
+            insert into t_student values(2,'lisi','f',20,'lisi@123.com');
+            +------+------+------+------+--------------+
+            | no   | name | sex  | age  | email        |
+            +------+------+------+------+--------------+
+            |    1 | NULL | m    | NULL | NULL         |
+            |    2 | lisi | f    |   20 | lisi@123.com |
+            +------+------+------+------+--------------+
+
+    27.5、insert插入日期
+
+        数字格式化：format
+            select ename,sal from emp;
+            +--------+---------+
+            | ename  | sal     |
+            +--------+---------+
+            | SIMITH |  800.00 |
+            | ALLEN  | 1600.00 |
+            | WARD   | 1250.00 |
+            | JONES  | 2975.00 |
+            | MARTIN | 1250.00 |
+            | BLAKE  | 2850.00 |
+            | CLARK  | 2450.00 |
+            | SCOTT  | 3000.00 |
+            | KING   | 5000.00 |
+            | TURNER | 1500.00 |
+            | ADAMS  | 1100.00 |
+            | JAMES  |  950.00 |
+            | FORD   | 3000.00 |
+            | MILLER | 1300.00 |
+            +--------+---------+
+        
+        str_to_date:将字符串varchar类型转换成date类型。
+        date_format:将date类型转换成具有一定格式的varchar字符串类型。
+
+        drop table if exists t_user;
+        create table t_user(
+            id int,
+            name varchar(32),
+            birth date  // 生日也可以使用date日期类型
+        );
+
+        create table t_user(
+            id int,
+            name varchar(32),
+            birth char(10)  // 生日可以使用字符串，没问题
+        );
+
+        生日：1990-10-11（10个字符）
+
+        注意：数据库中的又一条命名规范：
+            所有的标识符都是全部小写，单词和单词之间使用下划线进行衔接。
+
+        mysql> desc t_user;
+        +-------+-------------+------+-----+---------+-------+
+        | Field | Type        | Null | Key | Default | Extra |
+        +-------+-------------+------+-----+---------+-------+
+        | id    | int         | YES  |     | NULL    |       |
+        | name  | varchar(32) | YES  |     | NULL    |       |
+        | birth | date        | YES  |     | NULL    |       |
+        +-------+-------------+------+-----+---------+-------+
+
+        插入数据？
+            insert into t_user(id,name,birth) values(1,'zhangsan','01-10-1990'); // 1990年10月1日
+            出问题了：原因是类型不匹配。数据库birth是date类型，这里给了一个字符串varchar。
+
+            怎么办？可以使用str_to_date函数进行类型转换。
+            str_to_date函数可以将字符串转换成日期类型date？
+            语法格式：
+                str_to_date('字符串','日期格式')
+
+            mysql的日期格式：
+                %Y 年
+                %m 月
+                %d 日
+                %h 时
+                %i 分
+                %s 秒
+
+            insert into t_user(id,name,birth) values(1,'zhangsan',str_to_date('01-10-1990','%d-%m-%Y'));
+
+            str_to_date函数可以把字符串varchar转换成日期date类型数据，
+            通常使用在insert方面，因为插入的时候需要一个日期类型的数据，
+            需要通过该函数将字符串转换成date。
+
+        好消息？
+            如果你提供的日期字符串是这个格式，str_to_date函数就不需要了！！！
+                %Y-%m-%d
+            insert into t_user(id,name,birth) values(2,'lisi','1990-10-01');
+
+        查询的时候可以以某个特定的日期格式展示吗？
+            date_format
+            这个函数可以将日期类型转换成特定格式的字符串。
+
+            select id,name,date_format(birth,'%m/%d/%Y') as birth from t_user;
+            +------+----------+------------+
+            | id   | name     | birth      |
+            +------+----------+------------+
+            |    1 | zhangsan | 10/01/1990 |
+            |    2 | lisi     | 10/01/1990 |
+            +------+----------+------------+
+
+            date_format函数怎么用？
+                date_format(日期类型数据,'日期格式')
+                这个函数通常使用在查询日期方面。设置展示的日期格式。
+
+            mysql> select id,name,birth from t_user;
+            +------+----------+------------+
+            | id   | name     | birth      |
+            +------+----------+------------+
+            |    1 | zhangsan | 1990-10-01 |
+            |    2 | lisi     | 1990-10-01 |
+            +------+----------+------------+
+            以上的SQL语句实际上时进行了默认的日期格式化，
+            自动将数据库中的date类型转换成varchar类型。
+            并且采用的格式时mysql默认的日期格式：'%Y-%m-%d'
+
+    27.6、date和datetime两个类型的区别？
+        date是短日期：只包括年月日信息。
+        datetime是长日期：包括年月日时分秒信息。
+
+        drop table if exists t_user;
+        create table t_user(
+            id int,
+            name varchar(32),
+            birth date,
+            create_time datetime
+        );
+
+        id是整数
+        name是字符串
+        birth是短日期
+        create_time是这条记录的创作时间：长日期类型
+
+        mysql段日期默认格式：%Y-%m-%d
+        mysql长日期默认格式：%Y-%m-%d %h:%i:%s
+
+        insert into t_user(id,name,birth,create_time) values(1,'zhangsan','1990-10-01','2020-10-01 02:20:29');
+
+        在mysql当中怎么获取系统当前时间？
+            now() 函数，并且获取的时间带有：时分秒信息！！！！是datetime类型的。
+
+            insert into t_user(id,name,birth,create_time) values(2,'lisi','1991-10-01',now());
+    
+    27.7、修改update（DML）
+
+        语法格式：
+            update 表名 set 字段名1=值1，字段名2=值2，字段名3=值3...where 条件；
+
+            注意：没有条件限制会导致所有数据全部更新。
+
+            update t_user set name = 'jack',birth = '2000-10-11' where id = 2;
+            +------+----------+------------+---------------------+
+            | id   | name     | birth      | create_time         |
+            +------+----------+------------+---------------------+
+            |    1 | zhangsan | 1990-10-01 | 2020-10-01 02:20:29 |
+            |    2 | jack     | 2000-10-11 | 2023-11-16 11:50:26 |
+            +------+----------+------------+---------------------+
+
+            update t_user set name = 'jack',birth = '2000-10-11',create_time = now() where id = 2;
+
+        更新所有？
+            update t_user set name = 'abc';
+
+    27.8、删除数据 delete（DML）
+        语法格式？
+            delete from 表名 where 条件；
+
+        注意：没有条件，整张表的数据会全部删除！
+
+        delete from t_user where id = 2;
+
+        insert into t_user(id) values(2);
+
+        delete from t_user; // 删除所有
+
+    27.9、insert语句可以一次插入多条记录吗？
+        可以的！
+        mysql> desc t_user;
+        +-------------+-------------+------+-----+---------+-------+
+        | Field       | Type        | Null | Key | Default | Extra |
+        +-------------+-------------+------+-----+---------+-------+
+        | id          | int         | YES  |     | NULL    |       |
+        | name        | varchar(32) | YES  |     | NULL    |       |
+        | birth       | date        | YES  |     | NULL    |       |
+        | create_time | datetime    | YES  |     | NULL    |       |
+        +-------------+-------------+------+-----+---------+-------+
+
+        一次可以插入多条记录：
+            insert into t_user(id,name,birth,create_time) values
+            (1,'zs','1980-10-11',now()),
+            (2,'lisi','1981-10-11',now()),
+            (3,'wangwu','1982-10-11',now());
+
+            语法：insert into t_user(字段名1，字段名2) values(),(),(),();
+
+        mysql> select * from t_user;
+        +------+--------+------------+---------------------+
+        | id   | name   | birth      | create_time         |
+        +------+--------+------------+---------------------+
+        |    1 | zs     | 1980-10-11 | 2023-11-20 23:44:55 |
+        |    2 | lisi   | 1981-10-11 | 2023-11-20 23:44:55 |
+        |    3 | wangwu | 1982-10-11 | 2023-11-20 23:44:55 |
+        +------+--------+------------+---------------------+
+
+    27.10、快速创建表？
+
+        mysql> create table emp2 as select * from emp;
+
+        原理：
+            将一个查询结果当作一张表新建！！！！
+            这个可以完成表的快速复制！！！！
+            表创建出来，同时表中的数据也存在了！！！
+
+    27.11、快速删除表中的数据？
+
+        //删除dept_bak表中的数据
+        delete from dept_bak; // 这种删除数据的方式比较慢。
+
+        mysql> select * from dept_bak;
+        Empty set (0.00 sec)
+
+        delete语句删除数据的原理？（delete属于DML语句！！！）
+            表中的数据被删除了，但是这个数据在硬盘上的真实存储空间不会被释放！！！
+            这种删除缺点是：删除效率比较低。
+            这种删除有点事：支持回滚，后悔了可以再次恢复数据！！！
+
+        truncate语句删除数据的原理？
+            这种删除效率比较高，表被一次截断，物理删除。
+            这种删除缺点：不支持回滚。
+            这种删除优点：快速。
+
+        用法：truncate table dept_bak;（这种操作属于DDL操作）
+
+        大表非常大，上亿条记录？？？？
+            删除的时候，使用delete，也许需要执行1个小时才能删除完！效率较低。
+            可以选择使用truncate删除表中的数据。只需要不到1秒钟的时间就可以删除结束。效率较高。
+            但是使用truncate之前，必须仔细询问可恶是否真的需要删除，并警告删除之后不可恢复！！
+
+            truncate是删除表中的数据，表还在！
+        
+        删除表操作？
+            drop table 表名; // 这不是删除表中的数据，这是把表删除。
