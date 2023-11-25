@@ -1,0 +1,44 @@
+5.取得平均薪水最高部门的部门编号
+
+    第一步：查找每个部门的平均薪资
+        mysql> select deptno,avg(sal) from emp group by deptno;
+        +--------+-------------+
+        | deptno | avg(sal)    |
+        +--------+-------------+
+        |     20 | 2175.000000 |
+        |     30 | 1566.666667 |
+        |     10 | 2916.666667 |
+        +--------+-------------+
+
+    第二步：将每个部门的平均薪资进行排序
+        mysql> select deptno,avg(sal) as max from emp group by deptno order by max desc limit 1;
+        +--------+-------------+
+        | deptno | max         |
+        +--------+-------------+
+        |     10 | 2916.666667 |
+        +--------+-------------+
+
+    --------------------------------------------------------------------
+
+    第一步：查询每个部门最高的薪资 
+        select max(e.avgsal) from (select deptno,avg(sal) as avgsal from emp group by deptno) e;
+        +---------------+
+        | max(e.avgsal) |
+        +---------------+
+        |   2916.666667 |
+        +---------------+
+
+    第二步：查询平均薪资为2916.666667的部门
+        select 
+            deptno,avg(sal) 
+        from 
+            emp 
+        group by 
+            deptno 
+        having 
+            avg(sal) = (select max(e.avgsal) from (select deptno,avg(sal) as avgsal from emp group by deptno) e);
+        +--------+-------------+
+        | deptno | avg(sal)    |
+        +--------+-------------+
+        |     10 | 2916.666667 |
+        +--------+-------------+

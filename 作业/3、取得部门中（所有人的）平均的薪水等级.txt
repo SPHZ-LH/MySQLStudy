@@ -1,0 +1,53 @@
+3.取得部门中（所有人的）平均的薪水等级
+
+    第一步：查询每个部门的平均薪资
+        select deptno,avg(sal) from emp group by deptno;
+        +--------+-------------+
+        | deptno | avg(sal)    |
+        +--------+-------------+
+        |     20 | 2175.000000 |
+        |     30 | 1566.666667 |
+        |     10 | 2916.666667 |
+        +--------+-------------+ d表
+
+    第二步：查询薪资水平等级
+        mysql> select * from salgrade;
+        +-------+-------+-------+
+        | grade | losal | hisal |
+        +-------+-------+-------+
+        |     1 |   700 |  1200 |
+        |     2 |  1201 |  1400 |
+        |     3 |  1401 |  2000 |
+        |     4 |  2001 |  3000 |
+        |     5 |  3001 |  5000 |
+        +-------+-------+-------+ s表
+    
+    第三步：将两张表合并，条件：d.avg(sal) between s.losal and s.hisal
+        select
+            d.deptno,d.avgsal,s.grade
+        from
+            (select deptno,avg(sal) as avgsal from emp group by deptno) d
+        join
+            salgrade s
+        on
+            avgsal between s.losal and s.hisal
+        order by
+            grade asc;
+        +--------+-------------+-------+
+        | deptno | avgsal      | grade |
+        +--------+-------------+-------+
+        |     30 | 1566.666667 |     3 |
+        |     20 | 2175.000000 |     4 |
+        |     10 | 2916.666667 |     4 |
+        +--------+-------------+-------+
+
+        select
+            e.deptno,avg(sal)
+        from 
+            emp e
+        join
+            salgrade s
+        on
+            e.sal between s.losal and s.hisal
+        group by 
+            e.deptno;

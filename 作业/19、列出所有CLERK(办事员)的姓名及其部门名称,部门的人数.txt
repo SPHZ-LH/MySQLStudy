@@ -1,0 +1,56 @@
+19.列出所有"CLERK"(办事员)的姓名及其部门名称,部门的人数
+
+    第一步：查询所有"CLERK"(办事员)的姓名及其部门名称
+        select
+            ename,d.dname
+        from
+            emp e
+        join
+            dept d
+        on
+            e.deptno = d.deptno and e.job = 'CLERK';
+        +--------+-------------+
+        | ename  | dname       |
+        +--------+-------------+
+        | SIMITH | RESEARCHING |
+        | JAMES  | SALES       |
+        | ADAMS  | RESEARCHING |
+        | MILLER | ACCOUNTING  |
+        +--------+-------------+ e表
+    
+    第二步：查询每个部门的人数
+        select
+            d.dname,count(e.ename)
+        from
+            emp e
+        join
+            dept d
+        on
+            e.deptno = d.deptno
+        group by
+            d.dname;
+        +-------------+----------------+
+        | dname       | count(e.ename) |
+        +-------------+----------------+
+        | RESEARCHING |              5 |
+        | SALES       |              6 |
+        | ACCOUNTING  |              3 |
+        +-------------+----------------+ d表
+
+    第三步：合并，条件：e.dname = d.dname
+        select
+            e.ename,d.dname,d.count
+        from
+            (select ename as ename,d.dname as dname from emp e join dept d on e.deptno = d.deptno and e.job = 'CLERK') e
+        join
+            (select d.dname as dname,count(e.ename) as count from emp e join dept d on e.deptno = d.deptno group by d.dname) d
+        on
+            e.dname = d.dname;
+        +--------+-------------+-------+
+        | ename  | dname       | count |
+        +--------+-------------+-------+
+        | SIMITH | RESEARCHING |     5 |
+        | JAMES  | SALES       |     6 |
+        | ADAMS  | RESEARCHING |     5 |
+        | MILLER | ACCOUNTING  |     3 |
+        +--------+-------------+-------+
