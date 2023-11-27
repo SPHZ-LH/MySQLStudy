@@ -1,0 +1,17 @@
+30.列出各个部门的MANAGER(领导)的最低薪金
+
+        select
+            deptno,min(sal)
+        from
+            emp
+        where
+            job = 'MANAGER'
+        group by
+            deptno;
+        +--------+----------+
+        | deptno | min(sal) |
+        +--------+----------+
+        |     10 |  2450.00 |
+        |     30 |  2850.00 |
+        |     20 |  2975.00 |
+        +--------+----------+
