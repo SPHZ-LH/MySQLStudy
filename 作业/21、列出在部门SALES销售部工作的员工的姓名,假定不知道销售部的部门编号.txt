@@ -1,0 +1,23 @@
+21.列出在部门SALES销售部工作的员工的姓名,假定不知道销售部的部门编号
+
+    select 
+        e.ename
+    from
+        emp e
+    join
+        dept d
+    on
+        e.deptno = d.deptno
+    where
+        d.dname = 'SALES';
+
+    +--------+
+    | ename  |
+    +--------+
+    | ALLEN  |
+    | WARD   |
+    | MARTIN |
+    | BLAKE  |
+    | TURNER |
+    | JAMES  |
+    +--------+

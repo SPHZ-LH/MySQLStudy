@@ -1,0 +1,28 @@
+32.求出员工领导的薪水超过3000的员工名称与领导名称
+
+    第一步：查询所有薪资超过3000的员工编号
+        mysql> select empno from emp where sal > 3000;
+        +-------+
+        | empno |
+        +-------+
+        |  7839 |
+        +-------+
+
+    第二步：查询所有员工员工
+        select
+            e.ename '员工',d.ename as '领导',d.sal
+        from
+            emp e
+        left join
+            emp d
+        on
+            e.mgr = d.empno
+        where
+            e.mgr = (select empno from emp where sal > 3000);
+        +-------+------+---------+
+        | 员工  | 领导 | sal     |
+        +-------+------+---------+
+        | JONES | KING | 5000.00 |
+        | BLAKE | KING | 5000.00 |
+        | CLARK | KING | 5000.00 |
+        +-------+------+---------+

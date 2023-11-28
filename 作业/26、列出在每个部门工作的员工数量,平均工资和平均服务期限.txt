@@ -1,0 +1,42 @@
+26.列出在每个部门工作的员工数量,平均工资和平均服务期限
+
+    第一步：计算每个员工的服务期限
+        mysql> select ename,TimeStampDiff(YEAR,hiredate,now()) as time from emp;
+        +--------+------+
+        | ename  | time |
+        +--------+------+
+        | SIMITH |   42 |
+        | ALLEN  |   42 |
+        | WARD   |   42 |
+        | JONES  |   42 |
+        | MARTIN |   42 |
+        | BLAKE  |   42 |
+        | CLARK  |   42 |
+        | SCOTT  |   36 |
+        | KING   |   42 |
+        | TURNER |   42 |
+        | ADAMS  |   36 |
+        | JAMES  |   41 |
+        | FORD   |   41 |
+        | MILLER |   41 |
+        +--------+------+
+        
+    第二步：合并
+        select
+            d.deptno,count(e.ename),ifnull(AVG(E.SAL),0) as avgsal,ifnull(avg(TimeStampDiff(YEAR,hiredate,now())),0) as time
+        from
+            emp e
+        right join
+            dept d
+        on 
+            d.deptno = e.deptno
+        group by
+            d.deptno;
+        +--------+----------------+-------------+---------+
+        | deptno | count(e.ename) | avgsal      | time    |
+        +--------+----------------+-------------+---------+
+        |     10 |              3 | 2916.666667 | 41.6667 |
+        |     20 |              5 | 2175.000000 | 39.4000 |
+        |     30 |              6 | 1566.666667 | 41.8333 |
+        |     40 |              0 |    0.000000 |  0.0000 |
+        +--------+----------------+-------------+---------+

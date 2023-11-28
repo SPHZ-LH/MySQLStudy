@@ -1,0 +1,187 @@
+CREATE TABLE SC
+(
+  SNO      VARCHAR(200),
+  CNO      VARCHAR(200),
+  SCGRADE  VARCHAR(200)
+);
+
+CREATE TABLE S
+(
+  SNO    VARCHAR(200 ),
+  SNAME  VARCHAR(200)
+);
+
+CREATE TABLE C
+(
+  CNO       VARCHAR(200),
+  CNAME     VARCHAR(200),
+  CTEACHER  VARCHAR(200)
+);
+
+INSERT INTO C ( CNO, CNAME, CTEACHER ) VALUES ( '1', '语文', '张'); 
+INSERT INTO C ( CNO, CNAME, CTEACHER ) VALUES ( '2', '政治', '王'); 
+INSERT INTO C ( CNO, CNAME, CTEACHER ) VALUES ( '3', '英语', '李'); 
+INSERT INTO C ( CNO, CNAME, CTEACHER ) VALUES ( '4', '数学', '赵'); 
+INSERT INTO C ( CNO, CNAME, CTEACHER ) VALUES ( '5', '物理', '黎明'); 
+commit;
+ 
+INSERT INTO S ( SNO, SNAME ) VALUES ( '1', '学生1'); 
+INSERT INTO S ( SNO, SNAME ) VALUES ( '2', '学生2'); 
+INSERT INTO S ( SNO, SNAME ) VALUES ( '3', '学生3'); 
+INSERT INTO S ( SNO, SNAME ) VALUES ( '4', '学生4'); 
+commit;
+ 
+INSERT INTO SC ( SNO, CNO, SCGRADE ) VALUES ( '1', '1', '40'); 
+INSERT INTO SC ( SNO, CNO, SCGRADE ) VALUES ( '1', '2', '30'); 
+INSERT INTO SC ( SNO, CNO, SCGRADE ) VALUES ( '1', '3', '20'); 
+INSERT INTO SC ( SNO, CNO, SCGRADE ) VALUES ( '1', '4', '80'); 
+INSERT INTO SC ( SNO, CNO, SCGRADE ) VALUES ( '1', '5', '60'); 
+INSERT INTO SC ( SNO, CNO, SCGRADE ) VALUES ( '2', '1', '60'); 
+INSERT INTO SC ( SNO, CNO, SCGRADE ) VALUES ( '2', '2', '60'); 
+INSERT INTO SC ( SNO, CNO, SCGRADE ) VALUES ( '2', '3', '60'); 
+INSERT INTO SC ( SNO, CNO, SCGRADE ) VALUES ( '2', '4', '60'); 
+INSERT INTO SC ( SNO, CNO, SCGRADE ) VALUES ( '2', '5', '40'); 
+INSERT INTO SC ( SNO, CNO, SCGRADE ) VALUES ( '3', '1', '60'); 
+INSERT INTO SC ( SNO, CNO, SCGRADE ) VALUES ( '3', '3', '80'); 
+commit;
+
+
+13.面试题
+
+有 3 个表 S(学生表)，C（课程表），SC（学生选课表）
+
+S（SNO，SNAME）代表（学号，姓名）
+
+C（CNO，CNAME，CTEACHER）代表（课号，课名，教师）
+
+SC（SNO，CNO，SCGRADE）代表（学号，课号，成绩）
+
+问题：
+1，找出没选过“黎明”老师的所有学生姓名。
+
+    第一步：查询选择'黎明'老师的所有学生姓名
+        mysql> select sc.SNO from sc sc join c c on sc.CNO = c.CNO where c.CTEACHER = '黎明';
+        +------+
+        | SNO  |
+        +------+
+        | 1    |
+        | 2    |
+        +------+
+
+    第二步：将选择'黎明'老师的所有学生姓名排除
+        mysql> select sname from s where SNO not in(select sc.SNO from sc sc join c c on sc.CNO = c.CNO where c.CTEACHER = '黎明');
+        +-------+
+        | sname |
+        +-------+
+        | 学生3 |
+        | 学生4 |
+        +-------+
+
+
+2，列出 2 门以上（含2 门）不及格学生姓名及平均成绩。
+
+    第一步：查询2 门以上（含2 门）不及格学生的学号
+        mysql> select sno from sc where scgrade < 60 group by sno having count(cno) >= 2;
+        +------+
+        | sno  |
+        +------+
+        | 1    |
+        +------+
+
+    第二步：查询所有学生的平均成绩
+        select
+            s.sname,avg(sc.SCGRADE) as gpa
+        from
+            sc sc
+        join
+            s s
+        on
+            sc.sno = s.sno
+        group by
+            s.sname;
+        +-------+------+
+        | sname | gpa  |
+        +-------+------+
+        | 学生1 |   46 |
+        | 学生2 |   56 |
+        | 学生3 |   70 |
+        +-------+------+
+
+    第三步：过滤
+        select
+            s.sname,avg(sc.SCGRADE) as gpa
+        from
+            sc sc
+        join
+            s s
+        on
+            sc.sno = s.sno
+        where
+            sc.sno = (select sno from sc where scgrade < 60 group by sno having count(cno) >= 2)
+        group by
+            s.sname;
+        +-------+------+
+        | sname | gpa  |
+        +-------+------+
+        | 学生1 |   46 |
+        +-------+------+
+
+3，即学过 1 号课程又学过 2 号课所有学生的姓名。
+
+    第一步：查询学过 1 号课程或 2 号课的学生
+        select
+            sno,cno
+        from
+            sc
+        where
+            cno = 1 or cno =2;
+        +------+------+
+        | sno  | cno  |
+        +------+------+
+        | 1    | 1    |
+        | 1    | 2    |
+        | 2    | 1    |
+        | 2    | 2    |
+        | 3    | 1    |
+        +------+------+
+
+    第二步：查询同时学过两门课的学生学号
+        select
+            sno,count(cno)
+        from
+            sc
+        where
+            cno = 1 or cno =2
+        group by
+            sno
+        having
+            count(cno) = 2;
+        +------+------------+
+        | sno  | count(cno) |
+        +------+------------+
+        | 1    |          2 |
+        | 2    |          2 |
+        +------+------------+
+
+    第三步：合并，查询同时学过两门课的学生的名字
+        select
+            s.sname
+        from
+            sc sc
+        join
+            s s
+        on
+            sc.sno = s.sno
+        where
+            sc.cno = 1 or sc.cno =2
+        group by
+            s.sname
+        having
+            count(sc.cno) = 2;
+        +-------+
+        | sname |
+        +-------+
+        | 学生1 |
+        | 学生2 |
+        +-------+
+        

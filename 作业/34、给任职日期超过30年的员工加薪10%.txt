@@ -1,0 +1,55 @@
+34.给任职日期超过30年的员工加薪10%
+
+    第一步：查询任职期限大于30年的员工
+        select
+            ename,TimeStampDiff(YEAR,hiredate,now()) as time
+        from
+            emp
+        where
+            TimeStampDiff(YEAR,hiredate,now()) > 30;
+        +--------+------+
+        | ename  | time |
+        +--------+------+
+        | SIMITH |   42 |
+        | ALLEN  |   42 |
+        | WARD   |   42 |
+        | JONES  |   42 |
+        | MARTIN |   42 |
+        | BLAKE  |   42 |
+        | CLARK  |   42 |
+        | SCOTT  |   36 |
+        | KING   |   42 |
+        | TURNER |   42 |
+        | ADAMS  |   36 |
+        | JAMES  |   41 |
+        | FORD   |   41 |
+        | MILLER |   41 |
+        +--------+------+
+
+    第二步：给任职日期超过30年的员工加薪10%
+        select
+            ename,TimeStampDiff(YEAR,hiredate,now()) as time,sal*1.1 as sal
+        from
+            emp
+        where
+            TimeStampDiff(YEAR,hiredate,now()) > 30;
+        +--------+------+---------+
+        | ename  | time | sal     |
+        +--------+------+---------+
+        | SIMITH |   42 |  880.00 |
+        | ALLEN  |   42 | 1760.00 |
+        | WARD   |   42 | 1375.00 |
+        | JONES  |   42 | 3272.50 |
+        | MARTIN |   42 | 1375.00 |
+        | BLAKE  |   42 | 3135.00 |
+        | CLARK  |   42 | 2695.00 |
+        | SCOTT  |   36 | 3300.00 |
+        | KING   |   42 | 5500.00 |
+        | TURNER |   42 | 1650.00 |
+        | ADAMS  |   36 | 1210.00 |
+        | JAMES  |   41 | 1045.00 |
+        | FORD   |   41 | 3300.00 |
+        | MILLER |   41 | 1430.00 |
+        +--------+------+---------+
+
+    update emp set sal = sal * 1.1 where timestampdiff(YEAR,hiredate,now()) > 30;

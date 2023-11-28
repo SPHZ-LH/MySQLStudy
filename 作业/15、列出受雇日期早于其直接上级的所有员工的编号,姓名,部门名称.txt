@@ -1,0 +1,57 @@
+15.列出受雇日期早于其直接上级的所有员工的编号,姓名,部门名称
+
+    第一步：查询每个员工的编号、姓名、部门名称
+        select
+            e.empno,e.ename,t.dname
+        from
+            emp e
+        join
+            dept t
+        on
+            e.deptno = t.deptno
+        order by
+            e.empno desc;
+        +-------+--------+-------------+
+        | empno | ename  | dname       |
+        +-------+--------+-------------+
+        |  7934 | MILLER | ACCOUNTING  |
+        |  7902 | FORD   | RESEARCHING |
+        |  7900 | JAMES  | SALES       |
+        |  7876 | ADAMS  | RESEARCHING |
+        |  7844 | TURNER | SALES       |
+        |  7839 | KING   | ACCOUNTING  |
+        |  7788 | SCOTT  | RESEARCHING |
+        |  7782 | CLARK  | ACCOUNTING  |
+        |  7698 | BLAKE  | SALES       |
+        |  7654 | MARTIN | SALES       |
+        |  7566 | JONES  | RESEARCHING |
+        |  7521 | WARD   | SALES       |
+        |  7499 | ALLEN  | SALES       |
+        |  7369 | SIMITH | RESEARCHING |
+        +-------+--------+-------------+
+
+    第二步：合并，条件：e.mgr = d.empno and e.hiredate < d.hiredate
+        select
+            e.empno,e.ename,t.dname
+        from
+            emp e
+        join
+            dept t
+        on
+            e.deptno = t.deptno
+        join
+            emp d
+        on
+            e.mgr = d.empno and e.hiredate < d.hiredate
+        order by
+            e.empno desc;
+        +-------+--------+-------------+
+        | empno | ename  | dname       |
+        +-------+--------+-------------+
+        |  7782 | CLARK  | ACCOUNTING  |
+        |  7698 | BLAKE  | SALES       |
+        |  7566 | JONES  | RESEARCHING |
+        |  7521 | WARD   | SALES       |
+        |  7499 | ALLEN  | SALES       |
+        |  7369 | SIMITH | RESEARCHING |
+        +-------+--------+-------------+

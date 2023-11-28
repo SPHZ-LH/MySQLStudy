@@ -1,0 +1,25 @@
+24.列出薪金等于部门 30 中员工的薪金的其他员工的姓名和薪金
+
+    第一步：查询30部门员工的薪资
+        mysql> select sal from emp where deptno = 30;
+        +---------+
+        | sal     |
+        +---------+
+        | 1600.00 |
+        | 1250.00 |
+        | 1250.00 |
+        | 2850.00 |
+        | 1500.00 |
+        |  950.00 |
+        +---------+
+
+    第二步：查询其他部门的薪资与部门30薪资相同的员工
+        select
+            e.ename,e.sal
+        from
+            emp e
+        join
+            (select sal from emp where deptno = 30) t
+        on
+            e.sal = t.sal and e.deptno !=30;
+        Empty set (0.00 sec)

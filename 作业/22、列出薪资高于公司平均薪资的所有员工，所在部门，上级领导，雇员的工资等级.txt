@@ -1,0 +1,47 @@
+22.列出薪资高于公司平均薪资的所有员工，所在部门，上级领导，雇员的工资等级
+
+    第一步：计算出公司平均薪资
+        mysql> select avg(sal) from emp;
+        +-------------+
+        | avg(sal)    |
+        +-------------+
+        | 2073.214286 |
+        +-------------+
+
+    第二步：查询高于平均薪资的员工
+        mysql> select ename from emp where sal > (select avg(sal) from emp);
+        +-------+
+        | ename |
+        +-------+
+        | JONES |
+        | BLAKE |
+        | CLARK |
+        | SCOTT |
+        | KING  |
+        | FORD  |
+        +-------+
+
+    第三步：查询所在的部门、和上级领导和员工薪资等级
+        select
+            e.ename as '员工',e.deptno as '部门',t.ename as '上级领导',s.grade as '工资等级'
+        from
+            emp e
+        left join
+            emp t
+        on
+            e.mgr = t.empno
+        join
+            salgrade s
+        on
+            e.sal between s.losal and s.hisal
+        where e.sal > (select avg(sal) from emp);
+        +-------+------+----------+----------+
+        | 员工  | 部门 | 上级领导 | 工资等级 |
+        +-------+------+----------+----------+
+        | FORD  |   20 | JONES    |        4 |
+        | SCOTT |   20 | JONES    |        4 |
+        | CLARK |   10 | KING     |        4 |
+        | BLAKE |   30 | KING     |        4 |
+        | JONES |   20 | KING     |        4 |
+        | KING  |   10 | NULL     |        5 |
+        +-------+------+----------+----------+

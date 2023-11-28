@@ -1,0 +1,12 @@
+11.取得最后入职的5名员工
+
+    mysql> select ename,hiredate from emp order by hiredate desc limit 5;
+    +--------+------------+
+    | ename  | hiredate   |
+    +--------+------------+
+    | ADAMS  | 1987-05-23 |
+    | SCOTT  | 1987-04-19 |
+    | MILLER | 1982-01-23 |
+    | JAMES  | 1981-12-03 |
+    | FORD   | 1981-12-03 |
+    +--------+------------+
