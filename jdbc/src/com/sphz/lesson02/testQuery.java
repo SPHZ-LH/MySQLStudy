@@ -1,4 +1,6 @@
-package com.sphz.lesson02.utils;
+package com.sphz.lesson02;
+
+import com.sphz.lesson02.utils.jdbcUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
